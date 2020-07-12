@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace _3C_Battery_Analyser
+namespace _3C_Battery_Analyser.Core
 {
-    public static class Extensions
+    internal static class Extensions
     {
         public static string FormattedString(this DateTime date)
         {

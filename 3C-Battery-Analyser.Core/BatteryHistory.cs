@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace _3C_Battery_Analyser
+namespace _3C_Battery_Analyser.Core
 {
     public class BatteryHistory
     {
@@ -19,7 +19,11 @@ namespace _3C_Battery_Analyser
 
         public override string ToString()
         {
-            return $"{Date.FormattedString()} {$"Percent: {Percent, 4:P0}"} {$"Flow: {Flow_mA, 5} mA"} {$"Temperature: {Temperature, 4:N1} °C"}";
+            return 
+                $"{Date.FormattedString()} " +
+                $"{$"Percent: {Percent, 4:P0}"} " +
+                $"{$"Flow: {Flow_mA, 5} mA"} " +
+                $"{$"{Temperature, 4:N1} °C"}";
         }
 
         // 12 Jul 2020 19:28:52: 100%,1mA,0%/h,31.2°C,4307mV,ac,off,restart,1594553332370

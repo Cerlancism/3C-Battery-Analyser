@@ -5,7 +5,9 @@ using System.CommandLine.Invocation;
 using System.IO;
 using System.Linq;
 
-namespace _3C_Battery_Analyser
+using _3C_Battery_Analyser.Core;
+
+namespace _3C_Battery_Analyser.CLI
 {
     class Program
     {

@@ -3,11 +3,15 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>_3C_Battery_Analyser</RootNamespace>
+    <RootNamespace>_3C_Battery_Analyser.CLI</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20303.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\3C-Battery-Analyser.Core\3C-Battery-Analyser.Core.csproj" />
   </ItemGroup>
 
 </Project>

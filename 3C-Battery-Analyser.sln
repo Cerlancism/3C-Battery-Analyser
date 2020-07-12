@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30225.117
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3C-Battery-Analyser", "3C-Battery-Analyser.csproj", "{0D74880D-8C85-413E-823F-1BF4A6C2EBD5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3C-Battery-Analyser.Core", "3C-Battery-Analyser.Core\3C-Battery-Analyser.Core.csproj", "{749DC2B5-7E37-413C-934F-F04C2681CFFB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "3C-Battery-Analyser.CLI", "3C-Battery-Analyser.CLI\3C-Battery-Analyser.CLI.csproj", "{3582796F-5808-406F-82B8-2E2ACFEC30FF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0D74880D-8C85-413E-823F-1BF4A6C2EBD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0D74880D-8C85-413E-823F-1BF4A6C2EBD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0D74880D-8C85-413E-823F-1BF4A6C2EBD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0D74880D-8C85-413E-823F-1BF4A6C2EBD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{749DC2B5-7E37-413C-934F-F04C2681CFFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{749DC2B5-7E37-413C-934F-F04C2681CFFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{749DC2B5-7E37-413C-934F-F04C2681CFFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{749DC2B5-7E37-413C-934F-F04C2681CFFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3582796F-5808-406F-82B8-2E2ACFEC30FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3582796F-5808-406F-82B8-2E2ACFEC30FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3582796F-5808-406F-82B8-2E2ACFEC30FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3582796F-5808-406F-82B8-2E2ACFEC30FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
