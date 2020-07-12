@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
+using System.Linq;
 
 namespace _3C_Battery_Analyser
 {
@@ -9,11 +11,16 @@ namespace _3C_Battery_Analyser
     {
         static int Main(string[] args)
         {
+#if DEBUG
+            Analyse(@"D:\Shared\battery-monitor-data\bmw_history_202007.txt");
+            Console.ReadLine();
+            return 0;
+#else
             var rootCommand = new RootCommand
             {
                 new Option<string>(
                     "--file",
-                    getDefaultValue: () => "history.txt",
+                    getDefaultValue: () => "bmw_history.txt",
                     description: "History File"),
             };
 
@@ -24,12 +31,20 @@ namespace _3C_Battery_Analyser
 
             // Parse the incoming args and invoke the handler
             return rootCommand.InvokeAsync(args).Result;
+#endif
         }
 
         private static void Analyse(string file)
         {
             file = Path.GetFullPath(file);
             Console.WriteLine($"File: {file}");
+
+            var data = File.ReadLines(file).Select(BatteryHistory.Parse);
+
+            foreach (var item in data)
+            {
+                Console.WriteLine(item);
+            }
         }
     }
 }
