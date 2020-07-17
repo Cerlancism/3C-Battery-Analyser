@@ -41,9 +41,10 @@ namespace _3C_Battery_Analyser.CLI
             file = Path.GetFullPath(file);
             Console.WriteLine($"File: {file}");
 
-            var data = File.ReadLines(file).Select(BatteryHistory.Parse);
+            var allHistory = File.ReadLines(file).Select(BatteryHistory.Parse);
+            var cycles = ChargeCycle.GetChargeCycles(allHistory);
 
-            foreach (var item in data)
+            foreach (var item in cycles)
             {
                 Console.WriteLine(item);
             }
