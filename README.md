@@ -44,7 +44,7 @@ Battery history file analyser for [3C Battery Manager](https://play.google.com/s
 ## Input
 <details>
  <summary><code>bmw_history.txt</code></summary>
- Maybe get truncated on GitHub.
+ May get truncated on GitHub.
  <pre>
 12 Jul 2020 21:01:53: 98%,-361mA,0%/h,30.4°C,4271mV,unplugged,on,,1594558913539
 12 Jul 2020 20:36:18: 98%,-361mA,0%/h,30.4°C,4271mV,unplugged,off,,1594557378301
