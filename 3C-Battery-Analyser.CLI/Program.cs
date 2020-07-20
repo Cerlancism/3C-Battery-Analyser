@@ -14,7 +14,8 @@ namespace _3C_Battery_Analyser.CLI
         static int Main(string[] args)
         {
 #if DEBUG
-            Analyse(@"D:\Shared\battery-monitor-data\bmw_history_202007.txt");
+            Analyse(@"D:\Shared\battery-monitor-data\bmw_history_200712.txt");
+            Analyse(@"D:\Shared\battery-monitor-data\bmw_history_190901.txt");
             Console.ReadLine();
             return 0;
 #else
@@ -39,10 +40,11 @@ namespace _3C_Battery_Analyser.CLI
         private static void Analyse(string file)
         {
             file = Path.GetFullPath(file);
-            Console.WriteLine($"File: {file}");
+
+            Console.WriteLine($"{file}");
 
             var allHistory = File.ReadLines(file).Select(BatteryHistory.Parse);
-            var cycles = ChargeCycle.GetChargeCycles(allHistory);
+            var cycles = ChargeCycle.EnumerateChargeCycles(allHistory);
 
             foreach (var item in cycles)
             {

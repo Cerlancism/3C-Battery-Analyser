@@ -2,17 +2,40 @@
 
 namespace _3C_Battery_Analyser.Core
 {
-    public class BatteryHistory
+    public readonly struct BatteryHistory
     {
-        public DateTime Date { get; private set; }
-        public double Percent { get; private set; }
-        public int Flow_mA { get; private set; }
-        public double Temperature_C { get; private set; }
-        public double PercentHour { get; private set; }
-        public int Voltage_mV { get; private set; }
-        public bool Charging { get; private set; }
-        public bool Screen { get; private set; }
-        public bool Restarted { get; private set; }
+        public DateTime Date { get; }
+        public double Percent { get; }
+        public int Flow_mA { get; }
+        public double Temperature_C { get; }
+        public double PercentHour { get; }
+        public int Voltage_mV { get; }
+        public bool Charging { get; }
+        public bool Screen { get; }
+        public bool Restarted { get; }
+
+        public BatteryHistory(
+            DateTime date,
+            double percent,
+            int flow_mA,
+            double temperature_C,
+            double percentHour,
+            int voltage_mV,
+            bool charging,
+            bool screen,
+            bool restarted
+        )
+        {
+            Date = date;
+            Percent = percent;
+            Flow_mA = flow_mA;
+            Temperature_C = temperature_C;
+            PercentHour = percentHour;
+            Voltage_mV = voltage_mV;
+            Charging = charging;
+            Screen = screen;
+            Restarted = restarted;
+        }
 
         public override string ToString()
         {
@@ -41,16 +64,17 @@ namespace _3C_Battery_Analyser.Core
             var dataParts = dataParse.Split(",");
 
             return new BatteryHistory 
-            {
-                Date= DateTime.UnixEpoch.AddMilliseconds(double.Parse(dataParts[8])).ToLocalTime(),
-                Percent= double.Parse(dataParts[0].Replace("%", "")) / 100.0,
-                Flow_mA = int.Parse(dataParts[1].Replace("mA", "")),
-                PercentHour = double.Parse(dataParts[2].Replace("%/h", "")) / 100.0,
-                Temperature_C = double.Parse(dataParts[3].Replace("°C", "")),
-                Charging = dataParts[5] == "ac",
-                Screen = dataParts[6] == "on",
-                Restarted = dataParts[7] == "restart"
-            };
+            (
+                date: DateTime.UnixEpoch.AddMilliseconds(double.Parse(dataParts[8])).ToLocalTime(),
+                percent: double.Parse(dataParts[0].Replace("%", "")) / 100.0,
+                flow_mA: int.Parse(dataParts[1].Replace("mA", "")),
+                voltage_mV: int.Parse(dataParts[4].Replace("mV", "")),
+                percentHour: double.Parse(dataParts[2].Replace("%/h", "")) / 100.0,
+                temperature_C: double.Parse(dataParts[3].Replace("°C", "")),
+                charging: dataParts[5] == "ac",
+                screen: dataParts[6] == "on",
+                restarted: dataParts[7] == "restart"
+            );
         }
     }
 }

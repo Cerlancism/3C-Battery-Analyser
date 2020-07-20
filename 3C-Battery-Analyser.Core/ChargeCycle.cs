@@ -6,34 +6,43 @@ namespace _3C_Battery_Analyser.Core
 {
     public class ChargeCycle
     {
-        private readonly BatteryHistory[] historySet;
-        private readonly Lazy<double> lazyPercentCharged;
-        private readonly Lazy<BatteryHistory> lazyStart;
-        private readonly Lazy<BatteryHistory> lazyEnd;
+        public const double MINIMUM_CHARGE = 1.0 / 3;
 
-        public BatteryHistory Start => lazyStart.Value;
-        public BatteryHistory End => lazyEnd.Value;
-        public double PercentCharged => lazyPercentCharged.Value;
+        public BatteryHistory Start { get; }
+        public BatteryHistory End { get; }
+        public double PercentCharged { get; }
+        public TimeSpan OverCharge { get;  }
+        public double Capacity_mAH { get; }
 
-        public ChargeCycle(BatteryHistory[] history_set)
+        private readonly Lazy<TimeSpan> lazyDuration;
+        public TimeSpan Duration => lazyDuration.Value;
+        
+        private readonly Lazy<double> lazyRate_percentHour;
+        public double Rate_PercentHour => lazyRate_percentHour.Value;
+
+        public ChargeCycle(BatteryHistory start, BatteryHistory end, double percentCharged, TimeSpan overCharge, double chargeCapacity)
         {
-            historySet = history_set;
-
-            lazyStart = new Lazy<BatteryHistory>(() => historySet.Last());
-            lazyEnd = new Lazy<BatteryHistory>(() => historySet.First());
-            
-            lazyPercentCharged = new Lazy<double>(() =>
-            {
-                return End.Percent - Start.Percent;
-            });
+            Start = start;
+            End = end;
+            PercentCharged = percentCharged;
+            OverCharge = overCharge;
+            Capacity_mAH = chargeCapacity;
+            lazyDuration = new Lazy<TimeSpan>(() => End.Date - Start.Date);
+            lazyRate_percentHour = new Lazy<double>(() => PercentCharged / lazyDuration.Value.TotalHours);
         }
 
         public override string ToString()
         {
-            return $"{Start.Date.FormattedString()} - {End.Date.FormattedString()} {PercentCharged,6:P1} ";
+            return 
+                $"{Start.Date.FormattedString()} - {End.Date.FormattedString()} " +
+                $"{Start.Percent,3:P0} - {End.Percent,-4:P0} {$"({PercentCharged:P0})", -6} " +
+                $"{Duration.FormattedString()} " +
+                $"{Rate_PercentHour:P2}/Hour " +
+                $"{OverCharge.FormattedString()} " +
+                $"{Capacity_mAH:N4} mAH";
         }
 
-        public static IEnumerable<ChargeCycle> GetChargeCycles(IEnumerable<BatteryHistory> history_set)
+        public static IEnumerable<ChargeCycle> EnumerateChargeCycles(IEnumerable<BatteryHistory> history_set)
         {
             var iter = history_set.GetEnumerator();
 
@@ -43,8 +52,8 @@ namespace _3C_Battery_Analyser.Core
                 {
                     continue;
                 }
-                // WIP
-                IEnumerable<BatteryHistory> getHistorySet()
+
+                IEnumerable<BatteryHistory> enumerateSessionHistory()
                 {
                     do
                     {
@@ -58,9 +67,49 @@ namespace _3C_Battery_Analyser.Core
                     } while (iter.Current.Charging);
                 }
 
-                yield return new ChargeCycle(getHistorySet().ToArray());
+                var session = enumerateSessionHistory().ToArray();
+
+                if (session.Length < 2)
+                {
+                    continue;
+                }
+
+                var overCharge = session.TakeWhile((x, i) => x.Percent == 1 && session.ElementAtOrDefault(i + 1).Percent == 1);
+                var overChargeCount = overCharge.Count();
+                var overChargeDuration = overChargeCount > 0 ? overCharge.First().Date - overCharge.Last().Date : default;
+                var start = session.Last();
+                var end = session.ElementAt(overChargeCount);
+                var charged = end.Percent - start.Percent;
+                var estimatedCharge_mAH = EstimateCharge_mAH(session.Skip(overChargeCount)) / charged;
+
+                if (charged >= MINIMUM_CHARGE)
+                {
+                    yield return new ChargeCycle(start, end, charged, overChargeDuration, estimatedCharge_mAH);
+                }
             }
         }
 
+        private static double EstimateCharge_mAH(IEnumerable<BatteryHistory> chargeSession)
+        {
+            var output = 0.0;
+            var current = chargeSession.First();
+            foreach (var next in chargeSession.Skip(1))
+            {
+                if (current.Flow_mA <= 0 || next.Flow_mA <= 0)
+                {
+                    current = next;
+                    continue;
+                }
+
+                var ma = current.Flow_mA;
+                var duration = current.Date - next.Date;
+
+                output += ma * duration.TotalHours;
+
+                current = next;
+            }
+
+            return output;
+        }
     }
 }
