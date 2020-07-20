@@ -74,18 +74,21 @@ namespace _3C_Battery_Analyser.Core
                     continue;
                 }
 
+                var start = session.Last();
+                var charged = session.First().Percent - start.Percent;
+
+                if (charged < MINIMUM_CHARGE)
+                {
+                    continue;
+                }
+
                 var overCharge = session.TakeWhile((x, i) => x.Percent == 1 && session.ElementAtOrDefault(i + 1).Percent == 1);
                 var overChargeCount = overCharge.Count();
                 var overChargeDuration = overChargeCount > 0 ? overCharge.First().Date - overCharge.Last().Date : default;
-                var start = session.Last();
                 var end = session.ElementAt(overChargeCount);
-                var charged = end.Percent - start.Percent;
                 var estimatedCharge_mAH = EstimateCharge_mAH(session.Skip(overChargeCount)) / charged;
 
-                if (charged >= MINIMUM_CHARGE)
-                {
-                    yield return new ChargeCycle(start, end, charged, overChargeDuration, estimatedCharge_mAH);
-                }
+                yield return new ChargeCycle(start, end, charged, overChargeDuration, estimatedCharge_mAH);
             }
         }
 
