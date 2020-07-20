@@ -6,9 +6,9 @@ namespace _3C_Battery_Analyser.Core
 {
     static class Extensions
     {
-        public static string FormattedString(this DateTime value)
+        public static string FormattedString(this DateTime value, bool us = false)
         {
-            return $"{value:dd/MM/yyyy HH:mm:ss}";
+            return us ? $"{value:yyyy/MM/dd HH:mm:ss}"  : $"{value:dd/MM/yyyy HH:mm:ss}";
         }
 
         public static string FormattedString(this TimeSpan value)
