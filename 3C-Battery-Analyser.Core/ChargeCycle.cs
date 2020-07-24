@@ -7,6 +7,7 @@ namespace _3C_Battery_Analyser.Core
     public class ChargeCycle
     {
         public const double MINIMUM_CHARGE = 1.0 / 3;
+        public const int MINIMUM_FLOW_MA = 50;
 
         public BatteryHistory Start { get; }
         public BatteryHistory End { get; }
@@ -87,7 +88,11 @@ namespace _3C_Battery_Analyser.Core
                     continue;
                 }
 
-                var overCharge = session.TakeWhile((x, i) => x.Percent == 1 && session.ElementAtOrDefault(i + 1).Percent == 1);
+                var overCharge = session.TakeWhile((x, i) =>
+                {
+                    var next = session.ElementAtOrDefault(i + 1);
+                    return x.Percent == 1 && next.Percent == 1 && next.Flow_mA < MINIMUM_FLOW_MA;
+                });
                 var overChargeCount = overCharge.Count();
                 var overChargeDuration = overChargeCount > 0 ? overCharge.First().Date - overCharge.Last().Date : default;
                 var end = session.ElementAt(overChargeCount);
