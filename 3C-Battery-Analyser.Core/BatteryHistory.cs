@@ -49,6 +49,20 @@ namespace _3C_Battery_Analyser.Core
                 $"Restarted: {Restarted.FormattedString()}";
         }
 
+        public static bool TryParse(string raw, out BatteryHistory result)
+        {
+            try
+            {
+                result = Parse(raw);
+                return true;
+            }
+            catch (Exception)
+            {
+                result = default;
+                return false;
+            }
+        }
+
 
         // 12 Jul 2020 19:28:52: 100%,1mA,0%/h,31.2°C,4307mV,ac,off,restart,1594553332370
         public static BatteryHistory Parse(string raw)

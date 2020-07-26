@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.CommandLine.Parsing;
 using System.IO;
 using System.Linq;
 
@@ -28,17 +29,16 @@ namespace _3C_Battery_Analyser.CLI
             var rootCommand = new RootCommand
             {
                 new Option<string>(
-                    "--file",
-                    getDefaultValue: () => "bmw_history.txt",
-                    description: "History File"
+                    "--path",
+                    getDefaultValue: () => Directory.GetCurrentDirectory(),
+                    description: "Path of all the bmw_history files"
                 ),
                 new Option<Mode>(
                     "--mode",
                     getDefaultValue: () => Mode.Plain,
                     description: "Type of output"
-                )
+                ),
             };
-
             rootCommand.Description = "3C Battery history analyser";
 
             // Note that the parameters of the handler method are matched according to the names of the options
@@ -49,7 +49,12 @@ namespace _3C_Battery_Analyser.CLI
 #endif
         }
 
-        private static void Analyse(string file, Mode mode)
+        private static void Analyse(string path, Mode mode)
+        {
+            var files = Directory.GetFiles(Path.GetFullPath(path));
+        }
+
+        private static void AnalyseFile(string file, Mode mode)
         {
             file = Path.GetFullPath(file);
 
