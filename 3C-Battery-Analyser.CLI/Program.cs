@@ -20,12 +20,6 @@ namespace _3C_Battery_Analyser.CLI
     {
         static int Main(string[] args)
         {
-#if DEBUG
-            Analyse(@"D:\Shared\battery-monitor-data\bmw_history_200712.txt", Mode.CSV);
-            Analyse(@"D:\Shared\battery-monitor-data\bmw_history_190901.txt", Mode.CSV);
-            Console.ReadLine();
-            return 0;
-#else
             var rootCommand = new RootCommand
             {
                 new Option<string>(
@@ -46,12 +40,16 @@ namespace _3C_Battery_Analyser.CLI
 
             // Parse the incoming args and invoke the handler
             return rootCommand.InvokeAsync(args).Result;
-#endif
         }
 
         private static void Analyse(string path, Mode mode)
         {
-            var files = Directory.GetFiles(Path.GetFullPath(path));
+            var files = Directory.GetFiles(Path.GetFullPath(path), "*.txt");
+
+            foreach (var item in files)
+            {
+                Console.WriteLine(item);
+            }
         }
 
         private static void AnalyseFile(string file, Mode mode)
