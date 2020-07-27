@@ -10,7 +10,7 @@ using _3C_Battery_Analyser.Core;
 
 namespace _3C_Battery_Analyser.CLI
 {
-    enum Mode 
+    enum Mode
     {
         Plain,
         CSV
@@ -33,6 +33,7 @@ namespace _3C_Battery_Analyser.CLI
                     description: "Type of output"
                 ),
             };
+
             rootCommand.Description = "3C Battery history analyser";
 
             // Note that the parameters of the handler method are matched according to the names of the options
@@ -45,6 +46,16 @@ namespace _3C_Battery_Analyser.CLI
         private static void Analyse(string path, Mode mode)
         {
             var files = Directory.GetFiles(Path.GetFullPath(path), "*.txt");
+            var targets = files.Select(x =>
+            {
+                if (BatteryHistory.TryParse(File.ReadLines(x).FirstOrDefault(), out BatteryHistory result))
+                {
+                    return new BatteryHistory?(result);
+                }
+                return null;
+            }).Where(x => x.HasValue)
+            .Select(x => x.Value)
+            .OrderByDescending(x => x.Date);
 
             foreach (var item in files)
             {
