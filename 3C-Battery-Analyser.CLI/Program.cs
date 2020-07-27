@@ -20,15 +20,18 @@ namespace _3C_Battery_Analyser.CLI
     {
         static int Main(string[] args)
         {
+#if DEBUG
+            args = new[] { "--path", @"D:\Shared\battery-monitor-data", "--mode", "csv" };
+#endif
             var rootCommand = new RootCommand
             {
                 new Option<string>(
-                    "--path",
+                    new [] { "-p", "--path" },
                     getDefaultValue: () => Directory.GetCurrentDirectory(),
                     description: "Path of all the bmw_history files"
                 ),
                 new Option<Mode>(
-                    "--mode",
+                    new [] { "-m", "--mode" },
                     getDefaultValue: () => Mode.Plain,
                     description: "Type of output"
                 ),
@@ -50,16 +53,16 @@ namespace _3C_Battery_Analyser.CLI
             {
                 if (BatteryHistory.TryParse(File.ReadLines(x).FirstOrDefault(), out BatteryHistory result))
                 {
-                    return new BatteryHistory?(result);
+                    return (success: true, file: x, firstHistory: result);
                 }
-                return null;
-            }).Where(x => x.HasValue)
-            .Select(x => x.Value)
-            .OrderByDescending(x => x.Date);
+                return (success: false, file: default, firstHistory: default);
+            }).Where(x => x.success)
+                .OrderByDescending(x => x.firstHistory.Date)
+                .Select(x => x.file);
 
-            foreach (var item in files)
+            foreach (var item in targets)
             {
-                Console.WriteLine(item);
+                AnalyseFile(item, mode);
             }
         }
 
