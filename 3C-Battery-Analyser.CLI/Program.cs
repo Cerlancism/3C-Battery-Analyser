@@ -21,7 +21,7 @@ namespace _3C_Battery_Analyser.CLI
         static int Main(string[] args)
         {
 #if DEBUG
-            args = new[] { "--path", @"D:\Shared\battery-monitor-data", "--mode", "csv" };
+            args = new[] { "--path", @"D:\Shared\battery-monitor-data", "--mode", "plain" };
 #endif
             var rootCommand = new RootCommand
             {
@@ -49,14 +49,18 @@ namespace _3C_Battery_Analyser.CLI
         private static void Analyse(string path, Mode mode)
         {
             var files = Directory.GetFiles(Path.GetFullPath(path), "*.txt");
-            var targets = files.Select(x =>
+
+            static (bool success, string file, BatteryHistory firstHistory) selector(string x)
             {
                 if (BatteryHistory.TryParse(File.ReadLines(x).FirstOrDefault(), out BatteryHistory result))
                 {
                     return (success: true, file: x, firstHistory: result);
                 }
-                return (success: false, file: default, firstHistory: default);
-            }).Where(x => x.success)
+                return (success: false, default, default);
+            }
+
+            var targets = files.Select(selector)
+                .Where(x => x.success)
                 .OrderByDescending(x => x.firstHistory.Date)
                 .Select(x => x.file);
 

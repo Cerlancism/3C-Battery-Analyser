@@ -45,7 +45,7 @@ namespace _3C_Battery_Analyser.Core
 
         public string ToCSVString()
         {
-            return $"{End.Date.FormattedString(true)}, {(int)Capacity_mAH}";
+            return $"{End.Date.FormattedString(true)}, {(int)Math.Round(Capacity_mAH)}";
         }
 
         public static IEnumerable<ChargeCycle> EnumerateChargeCycles(IEnumerable<BatteryHistory> history_set)
