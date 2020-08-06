@@ -43,7 +43,12 @@ namespace _3C_Battery_Analyser.CLI
             rootCommand.Handler = CommandHandler.Create<string, Mode>(Analyse);
 
             // Parse the incoming args and invoke the handler
-            return rootCommand.InvokeAsync(args).Result;
+            var result = rootCommand.InvokeAsync(args).Result;
+
+#if DEBUG
+            Console.ReadLine();
+#endif
+            return result;
         }
 
         private static void Analyse(string path, Mode mode)
@@ -64,17 +69,27 @@ namespace _3C_Battery_Analyser.CLI
                 .OrderByDescending(x => x.firstHistory.Date)
                 .Select(x => x.file);
 
+            DateTime? last = null;
+
             foreach (var item in targets)
             {
-                AnalyseFile(item, mode);
+                last = AnalyseFile(item, mode, last);
             }
         }
 
-        private static void AnalyseFile(string file, Mode mode)
+        private static DateTime? AnalyseFile(string file, Mode mode, DateTime? lastDate = null)
         {
             file = Path.GetFullPath(file);
 
-            var allHistory = File.ReadLines(file).Select(BatteryHistory.Parse);
+            var allHistoryEnum = File.ReadLines(file).Select(BatteryHistory.Parse);
+
+            if (lastDate != null)
+            {
+                allHistoryEnum = allHistoryEnum.SkipWhile(x => x.Date > lastDate);
+            }
+
+            var allHistory = allHistoryEnum.ToArray();
+
             var cycles = ChargeCycle.EnumerateChargeCycles(allHistory);
 
             if (mode == Mode.Plain)
@@ -93,6 +108,8 @@ namespace _3C_Battery_Analyser.CLI
                     Console.WriteLine(item.ToCSVString());
                 }
             }
+
+            return allHistory.Length == 0 ? null : (DateTime?) allHistory.Last().Date;
         }
     }
 }
