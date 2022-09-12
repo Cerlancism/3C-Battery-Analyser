@@ -21,7 +21,7 @@ namespace _3C_Battery_Analyser.CLI
         static int Main(string[] args)
         {
 #if DEBUG
-            args = new[] { "--path", @"D:\Shared\battery-monitor-data", "--mode", "plain" };
+            args = new[] { "--path", @"C:\Mounts\Data\Shared\battery-monitor-data", "--mode", "plain" };
 #endif
             var rootCommand = new RootCommand
             {

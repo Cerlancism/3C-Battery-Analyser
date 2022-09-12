@@ -85,7 +85,7 @@ namespace _3C_Battery_Analyser.Core
                 voltage_mV: int.Parse(dataParts[4].Replace("mV", "")),
                 percentHour: double.Parse(dataParts[2].Replace("%/h", "")) / 100.0,
                 temperature_C: double.Parse(dataParts[3].Replace("°C", "")),
-                charging: dataParts[5] == "ac",
+                charging: dataParts[5] != "unplugged",
                 screen: dataParts[6] == "on",
                 restarted: dataParts[7] == "restart"
             );
